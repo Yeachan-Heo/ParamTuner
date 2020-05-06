@@ -1,6 +1,9 @@
-import numpy as np
-# alias
-nan = np.nan
+import json
+
+"""
+caution! nan과 같은 특수 객체는 registering이 불가능합니다.
+string을 registering 하시려면 "'string_name'" 형태로 하셔야 합니다.
+"""
 
 class VariableHolder:
     def __init__(self, **kwargs):
@@ -8,6 +11,11 @@ class VariableHolder:
         self.varnames = []
         self.add_variables(**kwargs)
 
+    @staticmethod
+    def from_json(path):
+        with open(path) as f:
+            kwargs = json.loads(f)
+        return VariableHolder(**kwargs)
 
     def add_variables(self, **kwargs):
         for name, value in kwargs.items():
@@ -19,6 +27,7 @@ class VariableHolder:
         self.add_variables(**{variable_name:variable})
 
     def set_value(self, variable_name: str, value: float):
+
         if variable_name in dir(self):
             exec(f"self.{variable_name} = {value}")
         else:
